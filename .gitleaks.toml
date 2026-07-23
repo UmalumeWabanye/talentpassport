@@ -1,0 +1,19 @@
+title = "talent-passport gitleaks config"
+
+[allowlist]
+description = "Allow known non-production placeholders in docs/examples/tests"
+paths = [
+  '''^\.env(\..+)?\.example$''',
+  '''^docs/.*$''',
+  '''^packages/config/src/env\.test\.ts$''',
+  '''^services/backend/src/config/environment\.test\.ts$''',
+  '''^services/backend/src/health/health\.e2e\.test\.ts$'''
+]
+regexes = [
+  '''access-secret''',
+  '''refresh-secret''',
+  '''local-access-secret''',
+  '''local-refresh-secret''',
+  '''test-access-secret''',
+  '''test-refresh-secret'''
+]
