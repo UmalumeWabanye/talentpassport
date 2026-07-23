@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prisma:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} prisma generate --config ../../database/prisma/prisma.config.ts --schema ../../database/prisma/schema.prisma",
+    "prisma:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} prisma generate --config ../../database/prisma/prisma.config.mjs --schema ../../database/prisma/schema.prisma",
     "dev": "nest start --watch",
     "prebuild": "pnpm prisma:generate",
     "build": "nest build -p tsconfig.build.json",
@@ -19,6 +19,7 @@
     "@nestjs/common": "^11.0.3",
     "@nestjs/core": "^11.0.3",
     "@nestjs/platform-express": "^11.0.3",
+    "@nestjs/swagger": "^11.4.6",
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "@talent-passport/config": "workspace:*",

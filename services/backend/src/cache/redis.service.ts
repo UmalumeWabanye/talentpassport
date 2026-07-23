@@ -1,17 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 
 import { AppConfigService } from '../config/app-config.service';
 
 @Injectable()
 export class RedisService {
+  private readonly logger = new Logger(RedisService.name);
   private readonly client: Redis;
 
-  constructor(configService: AppConfigService) {
+  constructor(@Inject(AppConfigService) configService: AppConfigService) {
     this.client = new Redis(configService.redisUrl, {
       enableOfflineQueue: false,
       lazyConnect: true,
       maxRetriesPerRequest: 1
+    });
+
+    this.client.on('error', (error) => {
+      this.logger.warn(`Redis client error: ${error.message}`);
     });
   }
 

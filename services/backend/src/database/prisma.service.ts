@@ -1,22 +1,22 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-import { AppConfigService } from '../config/app-config.service';
 import type { PrismaClient } from '../../generated/prisma/client';
+import { AppConfigService } from '../config/app-config.service';
 
 @Injectable()
 export class PrismaService implements OnModuleDestroy {
   private client?: PrismaClient;
   private readonly configService: AppConfigService;
 
-  constructor(configService: AppConfigService) {
+  constructor(@Inject(AppConfigService) configService: AppConfigService) {
     this.configService = configService;
   }
 
   private async getClient() {
     if (!this.client) {
       const { PrismaClient: GeneratedPrismaClient } = await import('../../generated/prisma/client');
-      const adapter = new PrismaPg({ connectionString: this.configService.databaseUrl });
+      const adapter = new PrismaPg({ connectionString: this.configService.databaseUrlPooled });
 
       this.client = new GeneratedPrismaClient({ adapter });
     }

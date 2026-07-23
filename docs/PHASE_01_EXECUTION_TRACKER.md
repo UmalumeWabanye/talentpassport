@@ -95,34 +95,36 @@ Evidence:
 Owner: Backend Platform
 
 ### Feature 3.1 - Service Bootstrap
-- [ ] Initialize NestJS backend service in services/backend
-- [ ] Configure module boundaries and folder conventions
-- [ ] Add structured logging and request tracing
-- [ ] Add API versioning strategy
+- [x] Initialize NestJS backend service in services/backend
+- [x] Configure module boundaries and folder conventions
+- [x] Add structured logging and request tracing
+- [x] Add API versioning strategy
 Evidence:
-- [ ] API boot logs
-- [ ] Module map documented
+- [x] API boot logs
+- [x] Module map documented
 
 ### Feature 3.2 - Core Platform Services
-- [ ] Configure PostgreSQL connection via Prisma
-- [ ] Configure Redis connection
+- [x] Configure PostgreSQL connection via Prisma
+- [x] Configure Redis connection
 - [x] Add health endpoints for app, db, and redis
 - [x] Add global error handler and validation pipe
 Evidence:
 - [x] Health endpoint outputs
-- [ ] Integration checks for db and redis
+- [x] Integration checks for db and redis
 
 ### Epic 3 Progress Notes
 - Backend service now has explicit module structure, configuration loading, health endpoint, logging, versioning, validation, and e2e coverage.
+- API response envelope and standardized error contract now apply globally to backend endpoints.
+- E2E health checks now cover app, db, and redis routes with stable backend test execution.
 
 ### Feature 3.3 - API Contract and Docs
-- [ ] Configure OpenAPI generation
-- [ ] Add versioned REST route conventions
-- [ ] Define base response/error contract
-- [ ] Publish API docs endpoint
+- [x] Configure OpenAPI generation
+- [x] Add versioned REST route conventions
+- [x] Define base response/error contract
+- [x] Publish API docs endpoint
 Evidence:
-- [ ] OpenAPI artifact generated
-- [ ] API docs URL documented
+- [x] OpenAPI artifact generated
+- [x] API docs URL documented
 
 ## Epic 4 - Authentication and Authorization
 Owner: Identity Platform

@@ -5,6 +5,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { configureApp } from './bootstrap/configure-app';
+import { configureDocs } from './bootstrap/configure-docs';
 import { getBackendEnv } from './config/environment';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
   });
 
   configureApp(app);
+  configureDocs(app);
 
   await app.listen(env.PORT);
   Logger.log(`Backend service listening on port ${env.PORT}`, 'Bootstrap');

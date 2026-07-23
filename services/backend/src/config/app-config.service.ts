@@ -22,6 +22,14 @@ export class AppConfigService {
     return this.env.DATABASE_URL;
   }
 
+  get databaseUrlPooled() {
+    return this.env.DATABASE_URL_POOLED ?? this.env.DATABASE_URL;
+  }
+
+  get directDatabaseUrl() {
+    return this.env.DIRECT_URL ?? this.env.DATABASE_URL;
+  }
+
   get redisUrl() {
     return this.env.REDIS_URL;
   }

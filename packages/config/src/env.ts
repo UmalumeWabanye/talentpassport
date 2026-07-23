@@ -5,6 +5,8 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  DATABASE_URL_POOLED: z.string().min(1).optional(),
+  DIRECT_URL: z.string().min(1).optional(),
   REDIS_URL: z.string().min(1, 'REDIS_URL is required'),
   AUTH_PROVIDER: z.enum(['clerk', 'authjs']).default('clerk'),
   JWT_ACCESS_SECRET: z.string().min(1, 'JWT_ACCESS_SECRET is required'),
