@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prisma:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} prisma generate --config ../../database/prisma/prisma.config.ts --schema ../../database/prisma/schema.prisma",
     "dev": "nest start --watch",
+    "prebuild": "pnpm prisma:generate",
     "build": "nest build -p tsconfig.build.json",
     "start": "node dist/main.js",
     "lint": "eslint src --ext .ts --max-warnings=0",
+    "pretypecheck": "pnpm prisma:generate",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "pretest": "pnpm prisma:generate",
     "test": "vitest run --config vitest.config.ts"
   },
   "dependencies": {
