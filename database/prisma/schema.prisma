@@ -6,3 +6,136 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum MembershipStatus {
+  active
+  invited
+  suspended
+}
+
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  displayName    String?
+  passwordHash   String?
+  isActive       Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  memberships    Membership[]
+  auditLogs      AuditLog[]    @relation("AuditLogActor")
+  uploadedFiles  FileMetadata[] @relation("FileMetadataUploader")
+  organizations  Organization[] @relation("OrganizationOwner")
+
+  @@index([isActive])
+  @@map("users")
+}
+
+model Organization {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String        @unique
+  description   String?
+  ownerId       String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  owner         User?         @relation("OrganizationOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  memberships   Membership[]
+  auditLogs     AuditLog[]
+  fileMetadata  FileMetadata[]
+
+  @@index([ownerId])
+  @@map("organizations")
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  key         String       @unique
+  name        String
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  memberships Membership[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String          @id @default(cuid())
+  key         String          @unique
+  name        String
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  roles       RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+  role         Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model Membership {
+  id             String            @id @default(cuid())
+  userId         String
+  organizationId  String
+  roleId          String
+  status          MembershipStatus  @default(active)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           Role              @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, status])
+  @@index([roleId])
+  @@map("memberships")
+}
+
+model AuditLog {
+  id             String        @id @default(cuid())
+  actorUserId    String?
+  organizationId  String?
+  action         String
+  resourceType   String
+  resourceId     String?
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  actor         User?         @relation("AuditLogActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, createdAt])
+  @@index([organizationId, createdAt])
+  @@index([resourceType, resourceId])
+  @@map("audit_logs")
+}
+
+model FileMetadata {
+  id             String        @id @default(cuid())
+  organizationId  String
+  uploadedById    String?
+  storageKey     String        @unique
+  originalName   String
+  mimeType       String
+  sizeBytes      Int
+  checksum      String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy     User?         @relation("FileMetadataUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([uploadedById])
+  @@map("file_metadata")
+}

@@ -169,13 +169,17 @@ Evidence:
 Owner: Data Platform
 
 ### Feature 5.1 - Core Schema
-- [ ] Create base schema with users, organizations, roles, permissions
-- [ ] Add audit logs and file metadata entities
-- [ ] Add indexes and constraints for integrity and performance
+- [x] Create base schema with users, organizations, roles, permissions
+- [x] Add audit logs and file metadata entities
+- [x] Add indexes and constraints for integrity and performance
 - [ ] Establish naming conventions and migration policy
 Evidence:
 - [ ] Prisma schema review checklist
 - [ ] Migration history validated
+
+### Epic 5 Progress Notes
+- Core Prisma schema now defines users, organizations, memberships, roles, permissions, audit logs, and file metadata with unique constraints and indexes.
+- Prisma client generation succeeds against the new schema.
 
 ### Feature 5.2 - Migration and Seed Strategy
 - [ ] Implement deterministic migration workflow
