@@ -10,6 +10,7 @@ import { configureApp } from '../bootstrap/configure-app';
 
 const testEnv = {
   AUTH_PROVIDER: 'authjs',
+  AUTH_ADMIN_EMAILS: 'admin@talentpassport.local',
   DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/talent_passport',
   DATABASE_URL_POOLED: 'postgresql://postgres:postgres@localhost:5432/talent_passport',
   DIRECT_URL: 'postgresql://postgres:postgres@localhost:5432/talent_passport',
@@ -57,6 +58,8 @@ describe('Auth endpoint', () => {
   it('supports register, token issue, profile, refresh, and logout flow', async () => {
     const email = 'auth-user@example.com';
     const password = 'strong-password';
+    const adminEmail = 'admin@talentpassport.local';
+    const adminPassword = 'strong-password';
 
     const registerResponse = await request(app.getHttpServer()).post('/api/v1/auth/register').send({
       email,
@@ -82,9 +85,44 @@ describe('Auth endpoint', () => {
       .get('/api/v1/auth/me')
       .set('Authorization', `Bearer ${tokenResponse.body.data.accessToken}`);
 
-    expect(profileResponse.status).toBe(200);
+    expect(profileResponse.status, JSON.stringify(profileResponse.body)).toBe(200);
     expect(profileResponse.body.success).toBe(true);
     expect(profileResponse.body.data.email).toBe(email);
+    expect(profileResponse.body.data.role).toBe('user');
+
+    const forbiddenAdminResponse = await request(app.getHttpServer())
+      .get('/api/v1/auth/admin')
+      .set('Authorization', `Bearer ${tokenResponse.body.data.accessToken}`);
+
+    expect(forbiddenAdminResponse.status, JSON.stringify(forbiddenAdminResponse.body)).toBe(403);
+    expect(forbiddenAdminResponse.body.success).toBe(false);
+
+    const adminRegisterResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/register')
+      .send({
+        email: adminEmail,
+        password: adminPassword
+      });
+
+    expect(adminRegisterResponse.status).toBe(201);
+
+    const adminTokenResponse = await request(app.getHttpServer())
+      .post('/api/v1/auth/token')
+      .send({
+        email: adminEmail,
+        password: adminPassword
+      });
+
+    expect(adminTokenResponse.status).toBe(201);
+
+    const adminResponse = await request(app.getHttpServer())
+      .get('/api/v1/auth/admin')
+      .set('Authorization', `Bearer ${adminTokenResponse.body.data.accessToken}`);
+
+    expect(adminResponse.status).toBe(200);
+    expect(adminResponse.body.success).toBe(true);
+    expect(adminResponse.body.data.role).toBe('admin');
+    expect(adminResponse.body.data.permissions).toContain('admin:read');
 
     const refreshResponse = await request(app.getHttpServer()).post('/api/v1/auth/refresh').send({
       sessionId: tokenResponse.body.data.sessionId,

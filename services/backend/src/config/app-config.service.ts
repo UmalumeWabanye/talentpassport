@@ -38,6 +38,17 @@ export class AppConfigService {
     return this.env.AUTH_PROVIDER;
   }
 
+  get authAdminEmails() {
+    const rawValue = this.env.AUTH_ADMIN_EMAILS ?? process.env.AUTH_ADMIN_EMAILS ?? '';
+
+    return new Set(
+      rawValue
+        .split(',')
+        .map((email) => email.trim().toLowerCase())
+        .filter(Boolean),
+    );
+  }
+
   get jwtAccessSecret() {
     return this.env.JWT_ACCESS_SECRET;
   }

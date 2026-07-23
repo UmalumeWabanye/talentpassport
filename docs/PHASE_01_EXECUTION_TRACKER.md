@@ -139,13 +139,16 @@ Evidence:
 - [x] Session expiration and refresh tests
 
 ### Feature 4.2 - RBAC
-- [ ] Define roles and permission model
-- [ ] Implement route guards and permission middleware
-- [ ] Enforce authorization on protected endpoints
-- [ ] Add negative tests for forbidden access
+ [x] Define roles and permission model
+ [x] Implement route guards and permission middleware
+ [x] Enforce authorization on protected endpoints
+ [x] Add negative tests for forbidden access
 Evidence:
-- [ ] RBAC matrix documented
-- [ ] Authorization integration tests
+ [x] RBAC matrix documented
+ [x] Authorization integration tests
+ Auth now issues role-aware access tokens with permissions derived from the configured admin allowlist.
+ Backend auth coverage now includes authenticated user access plus forbidden admin access and allowlisted admin access.
+
 
 ### Feature 4.3 - Multi-Tenant Authorization
 - [ ] Define tenant context propagation strategy

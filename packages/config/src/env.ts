@@ -9,6 +9,7 @@ const envSchema = z.object({
   DIRECT_URL: z.string().min(1).optional(),
   REDIS_URL: z.string().min(1, 'REDIS_URL is required'),
   AUTH_PROVIDER: z.enum(['clerk', 'authjs']).default('clerk'),
+  AUTH_ADMIN_EMAILS: z.string().optional(),
   JWT_ACCESS_SECRET: z.string().min(1, 'JWT_ACCESS_SECRET is required'),
   JWT_REFRESH_SECRET: z.string().min(1, 'JWT_REFRESH_SECRET is required'),
   JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),

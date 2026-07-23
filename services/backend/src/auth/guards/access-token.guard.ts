@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/commo
 import { UnauthorizedException } from '@nestjs/common';
 
 import { AuthService } from '../auth.service';
+import type { AuthContext } from '../rbac/auth-context.types';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const accessToken = authorizationHeader.slice('Bearer '.length).trim();
-    request.authUser = await this.authService.verifyAccessToken(accessToken);
+    request.authUser = await this.authService.verifyAccessToken(accessToken) as AuthContext;
 
     return true;
   }

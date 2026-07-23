@@ -7,6 +7,10 @@ import { randomUUID } from 'node:crypto';
 
 import { RedisService } from '../cache/redis.service';
 import { AppConfigService } from '../config/app-config.service';
+import type { AuthContext } from './rbac/auth-context.types';
+import { ROLE_PERMISSIONS } from './rbac/rbac.types';
+import type { RbacPermission } from './rbac/rbac.types';
+import type { RbacRole } from './rbac/rbac.types';
 import type {
   AccessTokenPayload,
   AuthProvider,
@@ -28,6 +32,8 @@ export class AuthService {
   async register(email: string, password: string) {
     this.assertLocalAuthProvider();
     const normalizedEmail = email.toLowerCase();
+    const role = this.roleForEmail(normalizedEmail);
+    const permissions = [...ROLE_PERMISSIONS[role]];
     const existingHash = await this.getUserHash(normalizedEmail);
 
     if (existingHash) {
@@ -42,7 +48,9 @@ export class AuthService {
 
     return {
       email: normalizedEmail,
-      provider: this.configService.authProvider
+      provider: this.configService.authProvider,
+      permissions,
+      role
     };
   }
 
@@ -99,7 +107,9 @@ export class AuthService {
       email: session.email,
       provider: session.provider,
       sessionId,
-      subject: session.subject
+      subject: session.subject,
+      permissions: session.permissions,
+      role: session.role
     });
   }
 
@@ -112,7 +122,7 @@ export class AuthService {
     };
   }
 
-  async verifyAccessToken(accessToken: string) {
+  async verifyAccessToken(accessToken: string): Promise<AuthContext> {
     try {
       const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(accessToken, {
         secret: this.configService.jwtAccessSecret
@@ -136,11 +146,15 @@ export class AuthService {
 
   private async issueSessionTokens(params: {
     email: string;
+    permissions?: RbacPermission[];
     provider: AuthProvider;
+    role?: RbacRole;
     sessionId?: string;
     subject: string;
   }) {
     const sessionId = params.sessionId ?? randomUUID();
+    const role = params.role ?? this.roleForEmail(params.email);
+    const permissions = params.permissions ?? [...ROLE_PERMISSIONS[role]];
     const refreshExpiresAt = Date.now() + this.configService.jwtRefreshTtlSeconds * 1000;
 
     const refreshToken = await this.jwtService.signAsync(
@@ -158,6 +172,8 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync(
       {
         email: params.email,
+        permissions,
+        role,
         sid: sessionId,
         sub: params.subject,
         typ: 'access'
@@ -175,8 +191,10 @@ export class AuthService {
     const session: SessionRecord = {
       email: params.email,
       expiresAt: refreshExpiresAt,
+      permissions,
       provider: params.provider,
       refreshTokenHash,
+      role,
       subject: params.subject
     };
 
@@ -254,5 +272,9 @@ export class AuthService {
 
   private userKey(email: string) {
     return `auth:user:${email}`;
+  }
+
+  private roleForEmail(email: string): RbacRole {
+    return this.configService.authAdminEmails.has(email.toLowerCase()) ? 'admin' : 'user';
   }
 }
