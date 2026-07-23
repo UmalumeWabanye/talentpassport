@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/config" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/api-client" },
+    { "path": "./services/workers" },
+    { "path": "./services/backend" },
+    { "path": "./apps/youth" },
+    { "path": "./apps/organisation" },
+    { "path": "./apps/employer" },
+    { "path": "./apps/investor" },
+    { "path": "./apps/admin" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@talent-passport/types": ["./packages/types/src/index.ts"],
+      "@talent-passport/types/*": ["./packages/types/src/*"],
+      "@talent-passport/config": ["./packages/config/src/index.ts"],
+      "@talent-passport/config/*": ["./packages/config/src/*"],
+      "@talent-passport/ui": ["./packages/ui/src/index.ts"],
+      "@talent-passport/ui/*": ["./packages/ui/src/*"],
+      "@talent-passport/auth": ["./packages/auth/src/index.ts"],
+      "@talent-passport/auth/*": ["./packages/auth/src/*"],
+      "@talent-passport/api-client": ["./packages/api-client/src/index.ts"],
+      "@talent-passport/api-client/*": ["./packages/api-client/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "coverage", ".turbo"]
+}
