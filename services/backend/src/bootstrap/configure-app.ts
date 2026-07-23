@@ -11,6 +11,12 @@ export function configureApp(app: INestApplication) {
     type: VersioningType.URI,
     prefix: 'v'
   });
+  app.use((request: { headers?: Record<string, string | string[] | undefined>; tenantId?: string }, _response: unknown, next: () => void) => {
+    const tenantHeader = request.headers?.['x-tenant-id'];
+
+    request.tenantId = Array.isArray(tenantHeader) ? tenantHeader[0] : tenantHeader;
+    next();
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

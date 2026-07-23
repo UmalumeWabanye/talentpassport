@@ -1,6 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConflictException } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common';
+import { ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { randomUUID } from 'node:crypto';
@@ -119,6 +120,18 @@ export class AuthService {
     return {
       revoked: true,
       sessionId
+    };
+  }
+
+  getTenantScopedResource(tenantId: string, requestTenantId: string, email: string) {
+    if (tenantId !== requestTenantId) {
+      throw new ForbiddenException('Cross-tenant access denied');
+    }
+
+    return {
+      actor: email,
+      boundary: 'enforced' as const,
+      tenantId
     };
   }
 

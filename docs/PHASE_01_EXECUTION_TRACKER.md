@@ -151,13 +151,19 @@ Evidence:
 
 
 ### Feature 4.3 - Multi-Tenant Authorization
-- [ ] Define tenant context propagation strategy
-- [ ] Enforce tenant boundary at service and data layers
-- [ ] Add tenant-aware guards and query constraints
-- [ ] Add cross-tenant access denial tests
+- [x] Define tenant context propagation strategy
+- [~] Enforce tenant boundary at service and data layers
+- [x] Add tenant-aware guards and query constraints
+- [x] Add cross-tenant access denial tests
 Evidence:
-- [ ] Tenant isolation test report
+- [x] Tenant isolation test report
 - [ ] Threat model notes
+
+### Epic 4 Progress Notes
+- Auth now issues role-aware access tokens with permissions derived from the configured admin allowlist.
+- Backend auth coverage now includes authenticated user access plus forbidden admin access and allowlisted admin access.
+- Tenant context now propagates from `x-tenant-id`, and tenant-scoped routes fail closed on cross-tenant access.
+- Schema-backed tenant isolation remains pending Epic 5 database work.
 
 ## Epic 5 - Database Foundation
 Owner: Data Platform

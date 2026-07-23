@@ -90,6 +90,23 @@ describe('Auth endpoint', () => {
     expect(profileResponse.body.data.email).toBe(email);
     expect(profileResponse.body.data.role).toBe('user');
 
+    const tenantResourceResponse = await request(app.getHttpServer())
+      .get('/api/v1/auth/tenants/tenant-alpha/resource')
+      .set('Authorization', `Bearer ${tokenResponse.body.data.accessToken}`)
+      .set('x-tenant-id', 'tenant-alpha');
+
+    expect(tenantResourceResponse.status).toBe(200);
+    expect(tenantResourceResponse.body.success).toBe(true);
+    expect(tenantResourceResponse.body.data.tenantId).toBe('tenant-alpha');
+
+    const crossTenantResponse = await request(app.getHttpServer())
+      .get('/api/v1/auth/tenants/tenant-alpha/resource')
+      .set('Authorization', `Bearer ${tokenResponse.body.data.accessToken}`)
+      .set('x-tenant-id', 'tenant-beta');
+
+    expect(crossTenantResponse.status, JSON.stringify(crossTenantResponse.body)).toBe(403);
+    expect(crossTenantResponse.body.success).toBe(false);
+
     const forbiddenAdminResponse = await request(app.getHttpServer())
       .get('/api/v1/auth/admin')
       .set('Authorization', `Bearer ${tokenResponse.body.data.accessToken}`);

@@ -16,6 +16,7 @@ import { LogoutSessionDto } from './dto/logout-session.dto';
 import { RefreshSessionDto } from './dto/refresh-session.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AccessTokenGuard } from './guards/access-token.guard';
+import { TenantScopeGuard } from './guards/tenant-scope.guard';
 import type { AuthContext } from './rbac/auth-context.types';
 @Controller('auth')
 export class AuthController {
@@ -76,5 +77,18 @@ export class AuthController {
       role: request.authUser.role,
       sessionId: request.authUser.sid
     };
+  }
+
+  @Get('tenants/:tenantId/resource')
+  @Version('1')
+  @UseGuards(AccessTokenGuard, TenantScopeGuard)
+  tenantResource(
+    @Req() request: { authUser: AuthContext; params: { tenantId: string }; tenantId?: string },
+  ) {
+    return this.authService.getTenantScopedResource(
+      request.params.tenantId,
+      request.tenantId ?? '',
+      request.authUser.email,
+    );
   }
 }

@@ -6,10 +6,11 @@ import { AuthService } from './auth.service';
 import { AccessTokenGuard } from './guards/access-token.guard';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { TenantScopeGuard } from './guards/tenant-scope.guard';
 
 @Module({
   imports: [JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, AccessTokenGuard, PermissionsGuard, RolesGuard]
+  providers: [AuthService, AccessTokenGuard, PermissionsGuard, RolesGuard, TenantScopeGuard]
 })
 export class AuthModule {}
