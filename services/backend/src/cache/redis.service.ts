@@ -39,4 +39,35 @@ export class RedisService {
       };
     }
   }
+
+  async get(key: string) {
+    try {
+      return await this.client.get(key);
+    } catch {
+      return null;
+    }
+  }
+
+  async set(key: string, value: string, ttlSeconds?: number) {
+    try {
+      if (typeof ttlSeconds === 'number') {
+        await this.client.set(key, value, 'EX', ttlSeconds);
+      } else {
+        await this.client.set(key, value);
+      }
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async del(key: string) {
+    try {
+      await this.client.del(key);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

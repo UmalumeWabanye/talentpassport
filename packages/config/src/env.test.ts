@@ -14,6 +14,8 @@ describe('parseEnv', () => {
       AUTH_PROVIDER: 'clerk',
       JWT_ACCESS_SECRET: 'access-secret',
       JWT_REFRESH_SECRET: 'refresh-secret',
+      JWT_ACCESS_TTL_SECONDS: '900',
+      JWT_REFRESH_TTL_SECONDS: '604800',
       NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
       NEXT_PUBLIC_API_URL: 'http://localhost:4000/api/v1'
     });
@@ -34,6 +36,8 @@ describe('parseEnv', () => {
         AUTH_PROVIDER: 'clerk',
         JWT_ACCESS_SECRET: 'access-secret',
         JWT_REFRESH_SECRET: 'refresh-secret',
+        JWT_ACCESS_TTL_SECONDS: '900',
+        JWT_REFRESH_TTL_SECONDS: '604800',
         NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
         NEXT_PUBLIC_API_URL: 'http://localhost:4000/api/v1'
       }),

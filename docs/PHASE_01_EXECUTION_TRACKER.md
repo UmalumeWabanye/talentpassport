@@ -130,13 +130,13 @@ Evidence:
 Owner: Identity Platform
 
 ### Feature 4.1 - Authentication Core
-- [ ] Implement auth provider integration (Clerk or Auth.js)
-- [ ] Implement JWT and refresh token strategy
-- [ ] Implement secure session lifecycle
-- [ ] Implement password hashing with Argon2 if self-managed
+- [x] Implement auth provider integration (Clerk or Auth.js)
+- [x] Implement JWT and refresh token strategy
+- [x] Implement secure session lifecycle
+- [x] Implement password hashing with Argon2 if self-managed
 Evidence:
-- [ ] Auth flow tests
-- [ ] Session expiration and refresh tests
+- [x] Auth flow tests
+- [x] Session expiration and refresh tests
 
 ### Feature 4.2 - RBAC
 - [ ] Define roles and permission model

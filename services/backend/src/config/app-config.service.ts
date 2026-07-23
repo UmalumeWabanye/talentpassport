@@ -33,4 +33,36 @@ export class AppConfigService {
   get redisUrl() {
     return this.env.REDIS_URL;
   }
+
+  get authProvider() {
+    return this.env.AUTH_PROVIDER;
+  }
+
+  get jwtAccessSecret() {
+    return this.env.JWT_ACCESS_SECRET;
+  }
+
+  get jwtRefreshSecret() {
+    return this.env.JWT_REFRESH_SECRET;
+  }
+
+  get jwtAccessTtlSeconds() {
+    const value = (this.env as Record<string, unknown>).JWT_ACCESS_TTL_SECONDS;
+
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+
+    return 900;
+  }
+
+  get jwtRefreshTtlSeconds() {
+    const value = (this.env as Record<string, unknown>).JWT_REFRESH_TTL_SECONDS;
+
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+
+    return 604800;
+  }
 }
