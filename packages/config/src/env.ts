@@ -21,6 +21,12 @@ const envSchema = z.object({
   STORAGE_MAX_FILE_SIZE_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
   STORAGE_ALLOWED_MIME_TYPES: z.string().min(1).default('application/pdf,image/png,image/jpeg,text/plain,text/csv'),
   STORAGE_PUBLIC_BASE_URL: z.string().url('STORAGE_PUBLIC_BASE_URL must be a valid URL').optional(),
+  CORS_ALLOWED_ORIGINS: z.string().min(1).default('http://localhost:3000'),
+  COOKIE_SECURE: z.enum(['true', 'false']).default('false'),
+  COOKIE_SAME_SITE: z.enum(['strict', 'lax', 'none']).default('lax'),
+  CSRF_ENABLED: z.enum(['true', 'false']).default('false'),
+  CSRF_HEADER_NAME: z.string().min(1).default('x-csrf-token'),
+  CSRF_ALLOWED_ORIGINS: z.string().optional(),
   NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL'),
   NEXT_PUBLIC_API_URL: z.string().url('NEXT_PUBLIC_API_URL must be a valid URL')
 });

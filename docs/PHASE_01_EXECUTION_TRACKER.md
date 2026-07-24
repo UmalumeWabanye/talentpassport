@@ -226,13 +226,16 @@ Evidence:
 Owner: Security Engineering
 
 ### Feature 7.1 - Web Security Baseline
-- [ ] Configure Helmet and strict security headers
-- [ ] Configure CORS with explicit allow-lists
-- [ ] Configure secure cookies and same-site policy
-- [ ] Configure CSRF protection where applicable
+- [x] Configure Helmet and strict security headers
+- [x] Configure CORS with explicit allow-lists
+- [x] Configure secure cookies and same-site policy
+- [x] Configure CSRF protection where applicable
 Evidence:
-- [ ] Header inspection logs
-- [ ] CSRF test coverage
+- [x] Header inspection logs
+- [x] CSRF test coverage
+
+### Epic 7 Security Notes
+- Bootstrap now applies Helmet security headers, explicit CORS allow-list enforcement, cookie security defaults, and optional CSRF middleware for unsafe methods.
 
 ### Feature 7.2 - API Protection
 - [ ] Configure global input validation and sanitization

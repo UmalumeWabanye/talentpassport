@@ -121,4 +121,48 @@ export class AppConfigService {
   get storagePublicBaseUrl() {
     return this.env.STORAGE_PUBLIC_BASE_URL ?? this.env.NEXT_PUBLIC_API_URL;
   }
+
+  get corsAllowedOrigins() {
+    const configured =
+      (this.env as Record<string, unknown>).CORS_ALLOWED_ORIGINS ?? process.env.CORS_ALLOWED_ORIGINS;
+    const value: string =
+      typeof configured === 'string' && configured.trim().length > 0
+        ? configured
+        : 'http://localhost:3000';
+
+    return value
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+  }
+
+  get cookieSecure() {
+    return this.env.COOKIE_SECURE === 'true';
+  }
+
+  get cookieSameSite() {
+    return this.env.COOKIE_SAME_SITE;
+  }
+
+  get csrfEnabled() {
+    return this.env.CSRF_ENABLED === 'true';
+  }
+
+  get csrfHeaderName() {
+    return this.env.CSRF_HEADER_NAME.toLowerCase();
+  }
+
+  get csrfAllowedOrigins() {
+    const configured =
+      (this.env as Record<string, unknown>).CSRF_ALLOWED_ORIGINS ?? process.env.CSRF_ALLOWED_ORIGINS;
+
+    if (typeof configured !== 'string' || configured.trim().length === 0) {
+      return this.corsAllowedOrigins;
+    }
+
+    return configured
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean);
+  }
 }
