@@ -1,9 +1,18 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { AppConfigService } from '../config/app-config.service';
 import { PrismaService } from '../database/prisma.service';
 import { StorageProviderFactory } from './providers/storage-provider.factory';
+import { FileValidationService } from './security/file-validation.service';
+import type { MalwareScanner } from './security/malware-scanner.interface';
+import { NoopMalwareScannerService } from './security/noop-malware-scanner.service';
 import type { SignedUrlResult, StorageFileMetadataRecord } from './storage.types';
 
 type FileMetadataModel = {
@@ -25,6 +34,8 @@ export class StorageService {
     @Inject(AppConfigService) private readonly configService: AppConfigService,
     @Inject(PrismaService) private readonly prismaService: PrismaService,
     @Inject(StorageProviderFactory) private readonly providerFactory: StorageProviderFactory,
+    @Inject(FileValidationService) private readonly validationService: FileValidationService,
+    @Inject(NoopMalwareScannerService) private readonly malwareScanner: MalwareScanner,
   ) {}
 
   async createUploadReservation(params: {
@@ -37,8 +48,25 @@ export class StorageService {
     uploaderEmail?: string;
   }) {
     this.assertTenantBoundary(params.organizationId, params.requestTenantId);
+    const validated = this.validationService.validateUpload({
+      mimeType: params.mimeType,
+      originalName: params.originalName,
+      sizeBytes: params.sizeBytes,
+    });
+    const scanResult = await this.malwareScanner.scanUploadCandidate({
+      checksum: params.checksum,
+      mimeType: validated.mimeType,
+      organizationId: params.organizationId,
+      originalName: validated.originalName,
+      sizeBytes: validated.sizeBytes,
+    });
+
+    if (scanResult.status === 'infected') {
+      throw new BadRequestException('File failed malware scan');
+    }
+
     const client = await this.prismaService.client();
-    const storageKey = this.buildStorageKey(params.organizationId, params.originalName);
+    const storageKey = this.buildStorageKey(params.organizationId, validated.extension);
     const uploader = params.uploaderEmail
       ? await client.user.findUnique({
           where: {
@@ -50,10 +78,10 @@ export class StorageService {
     const metadata = await client.fileMetadata.create({
       data: {
         checksum: params.checksum ?? null,
-        mimeType: params.mimeType,
+        mimeType: validated.mimeType,
         organizationId: params.organizationId,
-        originalName: params.originalName,
-        sizeBytes: params.sizeBytes,
+        originalName: validated.originalName,
+        sizeBytes: validated.sizeBytes,
         storageKey,
         uploadedById: uploader?.id ?? null,
       },
@@ -61,7 +89,7 @@ export class StorageService {
 
     const provider = this.providerFactory.getProvider();
     const signedUrl = provider.signUploadUrl({
-      contentType: params.mimeType,
+      contentType: validated.mimeType,
       expiresAt: this.getExpirationDate(),
       key: storageKey,
     });
@@ -122,14 +150,8 @@ export class StorageService {
     }
   }
 
-  private buildStorageKey(organizationId: string, originalName: string) {
-    const extension = originalName.includes('.')
-      ? originalName.split('.').pop()?.toLowerCase() ?? 'bin'
-      : 'bin';
-
-    const safeExtension = extension.replace(/[^a-z0-9]/g, '') || 'bin';
-
-    return `${organizationId}/${randomUUID()}.${safeExtension}`;
+  private buildStorageKey(organizationId: string, extension: string) {
+    return `${organizationId}/${randomUUID()}.${extension}`;
   }
 
   private getExpirationDate() {

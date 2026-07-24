@@ -18,6 +18,8 @@ const envSchema = z.object({
   STORAGE_BUCKET: z.string().min(1).default('talent-passport-dev'),
   STORAGE_SIGNING_SECRET: z.string().min(1).default('local-storage-signing-secret'),
   STORAGE_SIGNED_URL_TTL_SECONDS: z.coerce.number().int().positive().default(900),
+  STORAGE_MAX_FILE_SIZE_BYTES: z.coerce.number().int().positive().default(10 * 1024 * 1024),
+  STORAGE_ALLOWED_MIME_TYPES: z.string().min(1).default('application/pdf,image/png,image/jpeg,text/plain,text/csv'),
   STORAGE_PUBLIC_BASE_URL: z.string().url('STORAGE_PUBLIC_BASE_URL must be a valid URL').optional(),
   NEXT_PUBLIC_APP_URL: z.string().url('NEXT_PUBLIC_APP_URL must be a valid URL'),
   NEXT_PUBLIC_API_URL: z.string().url('NEXT_PUBLIC_API_URL must be a valid URL')

@@ -99,6 +99,25 @@ export class AppConfigService {
     return 900;
   }
 
+  get storageMaxFileSizeBytes() {
+    const value = (this.env as Record<string, unknown>).STORAGE_MAX_FILE_SIZE_BYTES;
+
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+
+    return 10 * 1024 * 1024;
+  }
+
+  get storageAllowedMimeTypes() {
+    return new Set(
+      this.env.STORAGE_ALLOWED_MIME_TYPES
+        .split(',')
+        .map((mimeType) => mimeType.trim().toLowerCase())
+        .filter(Boolean),
+    );
+  }
+
   get storagePublicBaseUrl() {
     return this.env.STORAGE_PUBLIC_BASE_URL ?? this.env.NEXT_PUBLIC_API_URL;
   }

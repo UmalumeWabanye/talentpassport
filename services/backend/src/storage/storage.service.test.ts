@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { AppConfigService } from '../config/app-config.service';
 import { LocalStorageProvider } from './providers/local-storage.provider';
 import { StorageProviderFactory } from './providers/storage-provider.factory';
+import { FileValidationService } from './security/file-validation.service';
 import { StorageService } from './storage.service';
 
 type FileMetadataEntity = {
@@ -19,10 +20,14 @@ type FileMetadataEntity = {
   uploadedById: string | null;
 };
 
-function createServiceHarness() {
+function createServiceHarness(options?: {
+  malwareResult?: { status: 'clean' | 'infected' | 'skipped' };
+}) {
   const files = new Map<string, FileMetadataEntity>();
 
   const config = {
+    storageAllowedMimeTypes: new Set(['application/pdf', 'image/png', 'image/jpeg', 'text/plain', 'text/csv']),
+    storageMaxFileSizeBytes: 10 * 1024 * 1024,
     storageProvider: 'local',
     storagePublicBaseUrl: 'http://localhost:4000/api/v1',
     storageSignedUrlTtlSeconds: 900,
@@ -71,7 +76,17 @@ function createServiceHarness() {
 
   const localProvider = new LocalStorageProvider(config);
   const providerFactory = new StorageProviderFactory(config, localProvider);
-  const service = new StorageService(config, prismaService as never, providerFactory);
+  const validationService = new FileValidationService(config);
+  const malwareScanner = {
+    scanUploadCandidate: async () => options?.malwareResult ?? { status: 'clean' as const },
+  };
+  const service = new StorageService(
+    config,
+    prismaService as never,
+    providerFactory,
+    validationService,
+    malwareScanner,
+  );
 
   return { service };
 }
@@ -114,5 +129,35 @@ describe('StorageService', () => {
     expect(download.download.method).toBe('GET');
     expect(download.download.url).toContain('/storage/object/download/');
     expect(download.download.url).toContain('signature=');
+  });
+
+  it('rejects uploads with disallowed MIME types', async () => {
+    const { service } = createServiceHarness();
+
+    await expect(
+      service.createUploadReservation({
+        mimeType: 'application/x-msdownload',
+        organizationId: 'org-2',
+        originalName: 'script.exe',
+        requestTenantId: 'org-2',
+        sizeBytes: 2048,
+      }),
+    ).rejects.toThrow('File MIME type is not allowed');
+  });
+
+  it('rejects uploads flagged by malware scanner', async () => {
+    const { service } = createServiceHarness({
+      malwareResult: { status: 'infected' },
+    });
+
+    await expect(
+      service.createUploadReservation({
+        mimeType: 'application/pdf',
+        organizationId: 'org-7',
+        originalName: 'cv.pdf',
+        requestTenantId: 'org-7',
+        sizeBytes: 1024,
+      }),
+    ).rejects.toThrow('File failed malware scan');
   });
 });

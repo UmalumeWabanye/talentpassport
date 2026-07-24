@@ -210,13 +210,17 @@ Evidence:
 - Storage environment variables and provider configuration are documented in `docs/STORAGE_PROVIDER_CONFIGURATION.md`.
 
 ### Feature 6.2 - File Security and Validation
-- [ ] Validate file type, size, and extension rules
-- [ ] Add malware scan integration hook point
-- [ ] Enforce content-type verification
-- [ ] Add secure filename and path handling
+- [x] Validate file type, size, and extension rules
+- [x] Add malware scan integration hook point
+- [x] Enforce content-type verification
+- [x] Add secure filename and path handling
 Evidence:
-- [ ] File validation test matrix
-- [ ] Security review notes
+- [x] File validation test matrix
+- [x] Security review notes
+
+### Epic 6 Security Notes
+- File uploads now enforce MIME allowlist, extension/MIME alignment, max-size limits, and sanitized filenames before metadata persistence.
+- Storage flow includes a malware scanner integration hook with explicit reject behavior when a file is flagged as infected.
 
 ## Epic 7 - Security
 Owner: Security Engineering
