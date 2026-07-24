@@ -172,7 +172,7 @@ Owner: Data Platform
 - [x] Create base schema with users, organizations, roles, permissions
 - [x] Add audit logs and file metadata entities
 - [x] Add indexes and constraints for integrity and performance
-- [ ] Establish naming conventions and migration policy
+- [x] Establish naming conventions and migration policy
 Evidence:
 - [ ] Prisma schema review checklist
 - [ ] Migration history validated
@@ -180,27 +180,34 @@ Evidence:
 ### Epic 5 Progress Notes
 - Core Prisma schema now defines users, organizations, memberships, roles, permissions, audit logs, and file metadata with unique constraints and indexes.
 - Prisma client generation succeeds against the new schema.
+- Deterministic migration SQL is committed and the seed workflow now runs through `tsx` with a backend-local Prisma client import path.
+- Cold-start bootstrap is validated with reset, deploy, status, and seed execution against a local Postgres instance.
 
 ### Feature 5.2 - Migration and Seed Strategy
-- [ ] Implement deterministic migration workflow
-- [ ] Implement seed data for local and test environments
-- [ ] Add rollback and recovery guidance
-- [ ] Validate cold-start setup from zero
+- [x] Implement deterministic migration workflow
+- [x] Implement seed data for local and test environments
+- [x] Add rollback and recovery guidance
+- [x] Validate cold-start setup from zero
 Evidence:
-- [ ] Fresh environment bootstrap log
-- [ ] Seed verification tests
+- [x] Fresh environment bootstrap log
+- [x] Seed verification tests
 
 ## Epic 6 - Storage Foundation
 Owner: Platform Services
 
 ### Feature 6.1 - Object Storage Integration
-- [ ] Implement storage abstraction interface
-- [ ] Implement provider adapter configuration
-- [ ] Implement signed URL generation
-- [ ] Implement upload/download metadata flow
+- [x] Implement storage abstraction interface
+- [x] Implement provider adapter configuration
+- [x] Implement signed URL generation
+- [x] Implement upload/download metadata flow
 Evidence:
-- [ ] Signed URL integration test
-- [ ] Provider config documentation
+- [x] Signed URL integration test
+- [x] Provider config documentation
+
+### Epic 6 Progress Notes
+- Storage module now provides provider abstraction via `StorageProvider` and local adapter wiring through `StorageProviderFactory`.
+- Versioned storage endpoints now issue signed upload/download URLs and persist/retrieve `file_metadata` records.
+- Storage environment variables and provider configuration are documented in `docs/STORAGE_PROVIDER_CONFIGURATION.md`.
 
 ### Feature 6.2 - File Security and Validation
 - [ ] Validate file type, size, and extension rules

@@ -6,7 +6,7 @@ import { AppConfigService } from '../config/app-config.service';
 
 @Injectable()
 export class PrismaService implements OnModuleDestroy {
-  private client?: PrismaClient;
+  private prismaClient?: PrismaClient;
   private readonly configService: AppConfigService;
 
   constructor(@Inject(AppConfigService) configService: AppConfigService) {
@@ -14,18 +14,22 @@ export class PrismaService implements OnModuleDestroy {
   }
 
   private async getClient() {
-    if (!this.client) {
+    if (!this.prismaClient) {
       const { PrismaClient: GeneratedPrismaClient } = await import('../../generated/prisma/client');
       const adapter = new PrismaPg({ connectionString: this.configService.databaseUrlPooled });
 
-      this.client = new GeneratedPrismaClient({ adapter });
+      this.prismaClient = new GeneratedPrismaClient({ adapter });
     }
 
-    return this.client;
+    return this.prismaClient;
   }
 
   async onModuleDestroy() {
-    await this.client?.$disconnect();
+    await this.prismaClient?.$disconnect();
+  }
+
+  async client() {
+    return this.getClient();
   }
 
   async ping() {

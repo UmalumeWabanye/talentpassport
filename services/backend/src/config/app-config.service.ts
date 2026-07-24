@@ -76,4 +76,30 @@ export class AppConfigService {
 
     return 604800;
   }
+
+  get storageProvider() {
+    return this.env.STORAGE_PROVIDER;
+  }
+
+  get storageBucket() {
+    return this.env.STORAGE_BUCKET;
+  }
+
+  get storageSigningSecret() {
+    return this.env.STORAGE_SIGNING_SECRET;
+  }
+
+  get storageSignedUrlTtlSeconds() {
+    const value = (this.env as Record<string, unknown>).STORAGE_SIGNED_URL_TTL_SECONDS;
+
+    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+
+    return 900;
+  }
+
+  get storagePublicBaseUrl() {
+    return this.env.STORAGE_PUBLIC_BASE_URL ?? this.env.NEXT_PUBLIC_API_URL;
+  }
 }

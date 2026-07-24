@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "prisma:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} prisma generate --config ../../database/prisma/prisma.config.mjs --schema ../../database/prisma/schema.prisma",
+    "db:migrate:deploy": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} prisma migrate deploy --config ../../database/prisma/prisma.config.mjs --schema ../../database/prisma/schema.prisma",
+    "db:migrate:status": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} prisma migrate status --config ../../database/prisma/prisma.config.mjs --schema ../../database/prisma/schema.prisma",
+    "db:migrate:reset": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} prisma migrate reset --force --config ../../database/prisma/prisma.config.mjs --schema ../../database/prisma/schema.prisma",
+    "db:seed": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/talent_passport?schema=public} DATABASE_URL_POOLED=${DATABASE_URL_POOLED:-$DATABASE_URL} DIRECT_URL=${DIRECT_URL:-$DATABASE_URL} tsx ../../database/prisma/seed.mjs",
     "dev": "nest start --watch",
     "prebuild": "pnpm prisma:generate",
     "build": "nest build -p tsconfig.build.json",
@@ -37,6 +41,7 @@
     "@types/supertest": "^6.0.3",
     "prisma": "^7.9.0",
     "supertest": "^7.1.4",
+    "tsx": "^4.23.1",
     "typescript": "^5.7.3"
   }
 }
